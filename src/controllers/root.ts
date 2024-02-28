@@ -11,7 +11,8 @@ import { cwd } from 'process'
 export default class LoginController {
   @Get('/')
   async root(@Ctx() ctx: Context) {
-    return ctx.redirect('https://app.onlyframes.xyz')
+    ctx.redirect('https://app.onlyframes.xyz')
+    return 'Redirecting to https://app.onlyframes.xyz...'
   }
 
   @Post('/upload')
