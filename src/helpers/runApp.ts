@@ -5,10 +5,12 @@ import { Server } from 'http'
 import { bootstrapControllers } from 'amala'
 import { resolve } from 'path'
 import env from '@/helpers/env'
+import KoaLogger from 'koa-logger'
 
 const app = new Koa()
 
 export default async function () {
+  app.use(KoaLogger())
   const router = new Router()
   await bootstrapControllers({
     app,

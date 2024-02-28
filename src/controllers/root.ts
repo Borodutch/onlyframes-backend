@@ -118,7 +118,6 @@ export default class RootController {
     try {
       const isOwner = await checkOwnership(file, address)
       if (!isOwner) {
-        console.log(`${env.BACKEND}/images/not-owner/${fileId}/${address}`)
         // TODO: add blockchain explorer link
         return getFrame(`${env.BACKEND}/images/not-owner/${fileId}/${address}`)
       }
