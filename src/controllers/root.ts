@@ -1,15 +1,18 @@
+import env from '@/helpers/env'
+import getFrame from '@/helpers/getFrame'
 import authenticate from '@/middleware/authenticate'
 import { FileModel } from '@/models/File'
 import PersistentFile from '@/models/PersistentFile'
+import FileId from '@/validators/FileId'
 import { badRequest } from '@hapi/boom'
-import { Controller, Ctx, File, Flow, Get, Post } from 'amala'
+import { Controller, Ctx, File, Flow, Get, Params, Post } from 'amala'
 import { copyFileSync, unlinkSync } from 'fs'
 import { Context } from 'koa'
 import { resolve } from 'path'
 import { cwd } from 'process'
 
 @Controller('/')
-export default class LoginController {
+export default class RootController {
   @Get('/')
   async root(@Ctx() ctx: Context) {
     ctx.redirect('https://app.onlyframes.xyz')
@@ -66,5 +69,25 @@ export default class LoginController {
     return {
       id: dbFile.id,
     }
+  }
+
+  @Get('/:fileId')
+  async getInitialFrame(@Params() { fileId }: FileId) {
+    const file = await FileModel.findById(fileId)
+    if (!file) {
+      return getFrame(`${env.BACKEND}/images/not-found/${fileId}`)
+    }
+    return getFrame(`${env.BACKEND}/images/${fileId}`, fileId)
+  }
+
+  @Post('/:fileId')
+  async getTrueFrame(@Params() { fileId }: FileId) {
+    const file = await FileModel.findById(fileId)
+    if (!file) {
+      return getFrame(`https://${env.BACKEND}/images/not-found/${fileId}`)
+    }
+    // TODO: check ownership
+    // TODO: return real file (+ report button)
+    // TODO: return placeholder if not owned (+ link to chain explorer)
   }
 }
