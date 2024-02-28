@@ -8,7 +8,7 @@ function buttons(fileId?: string) {
 <meta property="fc:frame:button:2" content="Create OnlyFrame" />
 <meta property="fc:frame:button:2:action" content="link" />
 <meta property="fc:frame:button:2:target" content="https://app.onlyframes.xyz" />
-<meta property="fc:frame:post_url" content=${env.BACKEND}/${fileId}" />
+<meta property="fc:frame:post_url" content="${env.BACKEND}/${fileId}" />
 `
   } else {
     return `

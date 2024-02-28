@@ -1,15 +1,21 @@
 import env from '@/helpers/env'
 import getFrame from '@/helpers/getFrame'
+import validateFrameData from '@/helpers/validateFrameData'
 import authenticate from '@/middleware/authenticate'
 import { FileModel } from '@/models/File'
 import PersistentFile from '@/models/PersistentFile'
 import FileId from '@/validators/FileId'
+import FrameAction from '@/models/FrameAction'
 import { badRequest } from '@hapi/boom'
-import { Controller, Ctx, File, Flow, Get, Params, Post } from 'amala'
+import { Body, Controller, Ctx, File, Flow, Get, Params, Post } from 'amala'
 import { copyFileSync, unlinkSync } from 'fs'
 import { Context } from 'koa'
 import { resolve } from 'path'
 import { cwd } from 'process'
+import neynar from '@/helpers/neynar'
+import checkOwnership from '@/helpers/checkOwnership'
+import { AccessTokenModel } from '@/models/AccessToken'
+import { v4 as uuid } from 'uuid'
 
 @Controller('/')
 export default class RootController {
@@ -65,6 +71,7 @@ export default class RootController {
     const fileName = `${dbFile.id}.${extension}`
     copyFileSync(file.filepath, resolve(cwd(), 'uploads', fileName))
     unlinkSync(file.filepath)
+    // TODO: report to telegram
     // Return the file id
     return {
       id: dbFile.id,
@@ -81,13 +88,49 @@ export default class RootController {
   }
 
   @Post('/:fileId')
-  async getTrueFrame(@Params() { fileId }: FileId) {
+  async getTrueFrame(
+    @Params() { fileId }: FileId,
+    @Body({ required: true })
+    { trustedData: { messageBytes } }: FrameAction,
+    @Ctx() ctx: Context
+  ) {
     const file = await FileModel.findById(fileId)
     if (!file) {
-      return getFrame(`https://${env.BACKEND}/images/not-found/${fileId}`)
+      return getFrame(`${env.BACKEND}/images/not-found/${fileId}`)
     }
-    // TODO: check ownership
-    // TODO: return real file (+ report button)
-    // TODO: return placeholder if not owned (+ link to chain explorer)
+    // Validate data
+    const data = await validateFrameData(messageBytes)
+    if (!data.valid) {
+      return ctx.throw(badRequest('Invalid data'))
+    }
+    const fid = data.message.data.fid
+    // Get user for this fid
+    const {
+      result: { user },
+    } = await neynar.lookupUserByFid(fid)
+    if (!user) {
+      return ctx.throw(badRequest('No user found'))
+    }
+    const address = user.verifications[0]
+    if (!address) {
+      return getFrame(`${env.BACKEND}/images/connect-account`)
+    }
+    const isOwner = await checkOwnership(file, address)
+    if (!isOwner) {
+      console.log(`${env.BACKEND}/images/not-owner/${fileId}/${address}`)
+      // TODO: add blockchain explorer link
+      return getFrame(`${env.BACKEND}/images/not-owner/${fileId}/${address}`)
+    }
+    // Create access token
+    const accessToken = await AccessTokenModel.create({
+      file,
+      uuid: uuid(),
+    })
+    // Return the file
+    // TODO: add report button
+    // TODO: fix aspect ratio
+    return getFrame(`${env.BACKEND}/images/token/${accessToken.uuid}`)
   }
+
+  // TODO: add report endpoint
 }

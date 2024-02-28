@@ -19,6 +19,7 @@
     "@hapi/boom": "^10.0.1",
     "@koa/cors": "^5.0.0",
     "@neynar/nodejs-sdk": "^1.10.0",
+    "@standard-crypto/farcaster-js": "^7.3.0",
     "amala": "^10.0.8",
     "canvas": "^2.11.2",
     "dotenv": "^16.4.5",
@@ -27,6 +28,7 @@
     "koa-router": "^12.0.1",
     "mongoose": "^8.2.0",
     "ultimate-text-to-image": "^1.0.1",
+    "uuid": "^9.0.1",
     "viem": "^2.7.15"
   },
   "devDependencies": {
@@ -38,6 +40,7 @@
     "@types/koa-router": "^7.4.8",
     "@types/koa__cors": "^5.0.0",
     "@types/node": "^20.11.20",
+    "@types/uuid": "^9",
     "eslint": "^8.57.0",
     "module-alias": "^2.2.3",
     "prettier": "^3.2.5",
