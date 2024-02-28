@@ -3,6 +3,7 @@ import { AccessTokenModel } from '@/models/AccessToken'
 import { FileModel } from '@/models/File'
 import AccessToken from '@/validators/AccessToken'
 import Address from '@/validators/Address'
+import ErrorText from '@/validators/ErrorText'
 import FileId from '@/validators/FileId'
 import { Controller, Get, Params } from 'amala'
 import { createReadStream } from 'fs'
@@ -60,6 +61,18 @@ Token address: ${file.tokenAddress}${file.tokenId ? `\nTokend ID: ${file.tokenId
 Your address: ${address}
 
 Seems like you don't own this token! Make sure to acquire it.`)
+  }
+
+  @Get('/error/:fileId/:address/:errorText')
+  async error(
+    @Params() { fileId, address, errorText }: FileId & Address & ErrorText
+  ) {
+    return getImage(`OnlyFrames
+    
+File ID: ${fileId}
+Your address: ${address}
+
+Error: ${errorText}`)
   }
 
   @Get('/:fileId')

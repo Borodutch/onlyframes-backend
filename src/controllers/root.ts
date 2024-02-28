@@ -115,21 +115,29 @@ export default class RootController {
     if (!address) {
       return getFrame(`${env.BACKEND}/images/connect-account`)
     }
-    const isOwner = await checkOwnership(file, address)
-    if (!isOwner) {
-      console.log(`${env.BACKEND}/images/not-owner/${fileId}/${address}`)
-      // TODO: add blockchain explorer link
-      return getFrame(`${env.BACKEND}/images/not-owner/${fileId}/${address}`)
+    try {
+      const isOwner = await checkOwnership(file, address)
+      if (!isOwner) {
+        console.log(`${env.BACKEND}/images/not-owner/${fileId}/${address}`)
+        // TODO: add blockchain explorer link
+        return getFrame(`${env.BACKEND}/images/not-owner/${fileId}/${address}`)
+      }
+      // Create access token
+      const accessToken = await AccessTokenModel.create({
+        file,
+        uuid: uuid(),
+      })
+      // Return the file
+      // TODO: add report button
+      // TODO: fix aspect ratio
+      return getFrame(`${env.BACKEND}/images/token/${accessToken.uuid}`)
+    } catch (error) {
+      const errorText = error instanceof Error ? error.message : `${error}`
+      console.error(errorText)
+      return getFrame(
+        `${env.BACKEND}/images/error/${fileId}/${address}/${errorText}`
+      )
     }
-    // Create access token
-    const accessToken = await AccessTokenModel.create({
-      file,
-      uuid: uuid(),
-    })
-    // Return the file
-    // TODO: add report button
-    // TODO: fix aspect ratio
-    return getFrame(`${env.BACKEND}/images/token/${accessToken.uuid}`)
   }
 
   // TODO: add report endpoint
