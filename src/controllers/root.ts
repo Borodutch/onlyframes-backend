@@ -1,4 +1,5 @@
 import authenticate from '@/middleware/authenticate'
+import { FileModel } from '@/models/File'
 import PersistentFile from '@/models/PersistentFile'
 import { badRequest } from '@hapi/boom'
 import { Controller, Ctx, File, Flow, Get, Post } from 'amala'
@@ -21,6 +22,16 @@ export default class LoginController {
     @Ctx() ctx: Context,
     @File() files: Record<string, PersistentFile>
   ) {
+    const { network, tokenaddress: tokenAddress, id } = ctx.req.headers
+    if (!network || !tokenAddress) {
+      return ctx.throw(badRequest('Network and token address are required'))
+    }
+    if (Array.isArray(network) || Array.isArray(tokenAddress)) {
+      return ctx.throw(badRequest('Network and token address must be strings'))
+    }
+    if (id && Array.isArray(id)) {
+      return ctx.throw(badRequest('ID must be a string'))
+    }
     const file = files['file']
     if (!file) {
       return ctx.throw(badRequest('No file uploaded'))
@@ -37,9 +48,23 @@ export default class LoginController {
     if (!file.mimetype || !allowedTypes.includes(file.mimetype)) {
       return ctx.throw(badRequest('The type of image must be jpg, png or gif'))
     }
+    // Get extension
+    const extension = file.mimetype.split('/')[1]
+    // Create a new file in the database
+    const dbFile = await FileModel.create({
+      uploaderFID: ctx.state['fid'],
+      network,
+      tokenAddress,
+      tokenId: id,
+      extension,
+    })
     // Save file to uploads folder
-    const fileName = `${new Date().getTime()}-${file.originalFilename}`
+    const fileName = `${dbFile.id}.${extension}`
     copyFileSync(file.filepath, resolve(cwd(), 'uploads', fileName))
     unlinkSync(file.filepath)
+    // Return the file id
+    return {
+      id: dbFile.id,
+    }
   }
 }

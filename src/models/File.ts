@@ -1,4 +1,5 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose'
+import Network from '@/models/Network'
 
 @modelOptions({
   schemaOptions: { timestamps: true },
@@ -6,6 +7,10 @@ import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose'
 export class File {
   @prop({ index: true, required: true })
   uploaderFID!: number
+  @prop({ index: true, required: true, enum: Network })
+  network!: Network
+  @prop({ index: true, required: true })
+  extension!: string
   @prop({ index: true, required: true })
   tokenAddress!: string
   @prop({ index: true })
