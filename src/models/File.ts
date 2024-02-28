@@ -5,8 +5,6 @@ import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose'
 })
 export class File {
   @prop({ index: true, required: true })
-  fileName!: string
-  @prop({ index: true, required: true })
   uploaderFID!: number
   @prop({ index: true, required: true })
   tokenAddress!: string

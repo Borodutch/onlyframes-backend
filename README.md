@@ -1,4 +1,4 @@
-# Onlyframes backend
+# OnlyFrames backend
 
 ## Installation and local launch
 

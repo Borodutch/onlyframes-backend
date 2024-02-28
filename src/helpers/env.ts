@@ -9,4 +9,5 @@ dotenv.config({ path: resolve(cwd(), '.env') })
 export default cleanEnv(process.env, {
   MONGO: str(),
   PORT: num({ default: 1337 }),
+  NEYNAR_API_KEY: str(),
 })

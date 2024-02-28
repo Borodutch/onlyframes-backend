@@ -1,6 +1,5 @@
 import Koa from 'koa'
 import Router from 'koa-router'
-import bodyParser from 'koa-bodyparser'
 import cors from '@koa/cors'
 import { Server } from 'http'
 import { bootstrapControllers } from 'amala'
@@ -19,7 +18,6 @@ export default async function () {
     router,
   })
   app.use(cors({ origin: '*' }))
-  app.use(bodyParser())
   app.use(router.routes())
   app.use(router.allowedMethods())
   return new Promise<Server>((resolve, reject) => {

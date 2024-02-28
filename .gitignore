@@ -2,6 +2,7 @@
 node_modules
 *.log
 dist
+uploads
 
 # yarn
 .pnp.*
