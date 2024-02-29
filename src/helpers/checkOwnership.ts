@@ -26,6 +26,8 @@ export default async function (file: File, address: string) {
         ]),
       }
     : {
+        address: file.tokenAddress as `0x${string}`,
+        functionName: 'balanceOf',
         args: [address],
         abi: parseAbi([
           'function balanceOf(address owner) view returns (uint256)',
