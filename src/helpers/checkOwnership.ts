@@ -72,9 +72,15 @@ export default async function (file: File, address: string) {
         address,
         eventId: file.tokenId,
       })
-      console.log(result)
+      const eventFound = result.data.some(
+        (event: { event: { id: number } }) =>
+          event.event.id === +(file.tokenId || 0)
+      )
+      if (!!eventFound) {
+        balance++
+      }
     } catch (error) {
-      console.log(
+      console.error(
         'POAP balance check error',
         error instanceof Error ? error.message : error
       )
