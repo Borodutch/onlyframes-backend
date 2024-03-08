@@ -1,6 +1,6 @@
 import { File } from '@/models/File'
 import { createPublicClient, http, parseAbi } from 'viem'
-import { base, mainnet, zora } from 'viem/chains'
+import { base, mainnet, polygon, zora } from 'viem/chains'
 
 const mainnetPublicClient = createPublicClient({
   chain: mainnet,
@@ -8,6 +8,10 @@ const mainnetPublicClient = createPublicClient({
 })
 const basePublicClient = createPublicClient({
   chain: base,
+  transport: http(),
+})
+const polygonPublicClient = createPublicClient({
+  chain: polygon,
   transport: http(),
 })
 const zoraPublicClient = createPublicClient({
@@ -40,6 +44,10 @@ export default async function (file: File, address: string) {
     } as any)) as number
   } else if (file.network === 'base') {
     balance = (await basePublicClient.readContract({
+      ...parameters,
+    } as any)) as number
+  } else if (file.network === 'polygon') {
+    balance = (await polygonPublicClient.readContract({
       ...parameters,
     } as any)) as number
   } else if (file.network === 'zora') {
