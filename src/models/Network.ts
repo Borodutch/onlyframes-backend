@@ -3,6 +3,7 @@ enum Network {
   zora = 'zora',
   base = 'base',
   polygon = 'polygon',
+  gnosis = 'gnosis',
 }
 
 export default Network
