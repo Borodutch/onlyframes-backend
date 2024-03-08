@@ -11,4 +11,5 @@ export default cleanEnv(process.env, {
   PORT: num({ default: 1337 }),
   NEYNAR_API_KEY: str(),
   BACKEND: str({ default: 'https://onlyframes.xyz' }),
+  POAP_API_KEY: str(),
 })

@@ -21,6 +21,7 @@
     "@neynar/nodejs-sdk": "^1.10.0",
     "@standard-crypto/farcaster-js": "^7.3.0",
     "amala": "^10.0.8",
+    "api": "^6.1.1",
     "canvas": "^2.11.2",
     "dotenv": "^16.4.5",
     "envalid": "^8.0.0",
