@@ -14,7 +14,7 @@ import { cwd } from 'process'
 export default class ImagesController {
   @Get('/connect-account')
   connectAccount(@Ctx() ctx: Context) {
-    ctx.headers['Content-Type'] = 'image/png'
+    // ctx.headers['Content-Type'] = 'image/png'
     return getImage(`OnlyFrames
 
 Connect a wallet that owns this token to your Farcaster account to see the file!`)
@@ -22,7 +22,7 @@ Connect a wallet that owns this token to your Farcaster account to see the file!
 
   @Get('/not-found/:fileId')
   notFound(@Params() { fileId }: FileId, @Ctx() ctx: Context) {
-    ctx.headers['Content-Type'] = 'image/png'
+    // ctx.headers['Content-Type'] = 'image/png'
     return getImage(`OnlyFrames
     
 File ID: ${fileId}
@@ -33,19 +33,19 @@ Not found!`)
   async token(@Params() { token }: AccessToken, @Ctx() ctx: Context) {
     const dbToken = await AccessTokenModel.findOne({ uuid: token })
     if (!dbToken) {
-      ctx.headers['Content-Type'] = 'image/png'
+      // ctx.headers['Content-Type'] = 'image/png'
       return getImage(`OnlyFrames
 
 Token not found!`)
     }
     const file = await FileModel.findById(dbToken.file)
     if (!file) {
-      ctx.headers['Content-Type'] = 'image/png'
+      // ctx.headers['Content-Type'] = 'image/png'
       return getImage(`OnlyFrames
 
 File not found!`)
     }
-    ctx.headers['Content-Type'] = `image/${file.extension}`
+    // ctx.headers['Content-Type'] = `image/${file.extension}`
     return createReadStream(
       resolve(cwd(), 'uploads', `${file.id}.${file.extension}`)
     )
@@ -58,11 +58,11 @@ File not found!`)
   ) {
     const file = await FileModel.findById(fileId)
     if (!file) {
-      ctx.headers['Content-Type'] = 'image/png'
+      // ctx.headers['Content-Type'] = 'image/png'
       return getImage(`File ID: ${fileId}
       Not found!`)
     }
-    ctx.headers['Content-Type'] = 'image/png'
+    // ctx.headers['Content-Type'] = 'image/png'
     return getImage(`OnlyFrames
     
 File ID: ${fileId}
@@ -77,7 +77,7 @@ Seems like you don't own this token! Make sure to acquire it.`)
     @Params() { fileId, address, errorText }: FileId & Address & ErrorText,
     @Ctx() ctx: Context
   ) {
-    ctx.headers['Content-Type'] = 'image/png'
+    // ctx.headers['Content-Type'] = 'image/png'
     return getImage(`OnlyFrames
     
 File ID: ${fileId}
@@ -90,11 +90,11 @@ Error: ${errorText}`)
   async getInitialFrame(@Params() { fileId }: FileId, @Ctx() ctx: Context) {
     const file = await FileModel.findById(fileId)
     if (!file) {
-      ctx.headers['Content-Type'] = 'image/png'
+      // ctx.headers['Content-Type'] = 'image/png'
       return getImage(`File ID: ${fileId}
       Not found!`)
     }
-    ctx.headers['Content-Type'] = 'image/png'
+    // ctx.headers['Content-Type'] = 'image/png'
     return getImage(`OnlyFrames
 
 File ID: ${fileId}
